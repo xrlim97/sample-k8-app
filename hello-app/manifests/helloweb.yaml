@@ -24,13 +24,12 @@ pipeline:
                         store:
                           type: Github
                           spec:
-                            connectorRef: account.Github_OAuth_1660530113170
+                            connectorRef: GitHubOrg
                             gitFetchType: Branch
                             paths:
-                              - hello-app/manifests/helloweb-deployment.yaml
-                              - hello-app/manifests/helloweb-service.yaml
-                            repoName: xrlim97/sample-k8-app
-                            branch: main
+                              - gb/guestbook/all-in-one/guestbook-all-in-one.yaml
+                            repoName: gb
+                            branch: master
                         skipResourceVersioning: false
               type: Kubernetes
           infrastructure:
@@ -38,8 +37,8 @@ pipeline:
             infrastructureDefinition:
               type: KubernetesGcp
               spec:
-                connectorRef: HelloGCP
-                cluster: asia-southeast1/hello-cluster
+                connectorRef: HarnessOrgGCP
+                cluster: hello-cluter
                 namespace: helloweb
                 releaseName: release-<+INFRA_KEY>
             allowSimultaneousDeployments: false
