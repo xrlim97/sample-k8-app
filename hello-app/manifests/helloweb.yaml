@@ -1,0 +1,67 @@
+pipeline:
+  name: PipelineTest
+  identifier: PipelineTest
+  projectIdentifier: GKEDeployment
+  orgIdentifier: default
+  tags: {}
+  stages:
+    - stage:
+        name: Initialize
+        identifier: Initialize
+        description: ""
+        type: Deployment
+        spec:
+          serviceConfig:
+            serviceRef: DeployFirst
+            serviceDefinition:
+              spec:
+                variables: []
+                manifests:
+                  - manifest:
+                      identifier: deployment
+                      type: K8sManifest
+                      spec:
+                        store:
+                          type: Github
+                          spec:
+                            connectorRef: account.Github_OAuth_1660530113170
+                            gitFetchType: Branch
+                            paths:
+                              - hello-app/manifests/helloweb-deployment.yaml
+                            repoName: xrlim97/sample-k8-app
+                            branch: main
+                        skipResourceVersioning: false
+              type: Kubernetes
+          infrastructure:
+            environmentRef: PreProduct
+            infrastructureDefinition:
+              type: KubernetesGcp
+              spec:
+                connectorRef: HelloGCP
+                cluster: hello-cluster
+                namespace: helloweb
+                releaseName: release-<+INFRA_KEY>
+            allowSimultaneousDeployments: false
+          execution:
+            steps:
+              - step:
+                  name: Rollout Deployment
+                  identifier: rolloutDeployment
+                  type: K8sRollingDeploy
+                  timeout: 10m
+                  spec:
+                    skipDryRun: false
+            rollbackSteps:
+              - step:
+                  name: Rollback Rollout Deployment
+                  identifier: rollbackRolloutDeployment
+                  type: K8sRollingRollback
+                  timeout: 10m
+                  spec: {}
+        tags: {}
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: StageRollback
