@@ -18,7 +18,7 @@ pipeline:
                 variables: []
                 manifests:
                   - manifest:
-                      identifier: deployment
+                      identifier: yamlFiles
                       type: K8sManifest
                       spec:
                         store:
@@ -28,19 +28,6 @@ pipeline:
                             gitFetchType: Branch
                             paths:
                               - hello-app/manifests/helloweb-deployment.yaml
-                            repoName: xrlim97/sample-k8-app
-                            branch: main
-                        skipResourceVersioning: false
-                  - manifest:
-                      identifier: service
-                      type: K8sManifest
-                      spec:
-                        store:
-                          type: Github
-                          spec:
-                            connectorRef: account.Github_OAuth_1660530113170
-                            gitFetchType: Branch
-                            paths:
                               - hello-app/manifests/helloweb-service.yaml
                             repoName: xrlim97/sample-k8-app
                             branch: main
