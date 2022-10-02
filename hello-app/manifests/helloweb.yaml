@@ -31,6 +31,14 @@ pipeline:
                             repoName: gb
                             branch: master
                         skipResourceVersioning: false
+                artifacts:
+                  primary:
+                    spec:
+                      connectorRef: HarnessOrgGCP
+                      imagePath: redis:e2e
+                      tag: <+input>
+                      registryHostname: k8s.gcr.io
+                    type: Gcr
               type: Kubernetes
           infrastructure:
             environmentRef: PreProduct
