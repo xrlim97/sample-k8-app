@@ -13,7 +13,7 @@ pipeline:
         type: Deployment
         spec:
           serviceConfig:
-            serviceRef: DeployFirst
+            serviceRef: kub
             serviceDefinition:
               spec:
                 variables: []
