@@ -13,7 +13,7 @@ pipeline:
         type: Deployment
         spec:
           serviceConfig:
-            serviceRef: deployment
+            serviceRef: DeployFirst
             serviceDefinition:
               spec:
                 variables: []
