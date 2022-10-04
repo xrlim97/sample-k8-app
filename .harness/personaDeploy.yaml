@@ -1,0 +1,77 @@
+pipeline:
+  name: personaDeploy
+  identifier: personaDeploy
+  projectIdentifier: GKEDeployment
+  orgIdentifier: default
+  description: deploy using personal docker, personal code
+  tags: {}
+  stages:
+    - stage:
+        name: test1
+        identifier: test1
+        description: ""
+        type: Deployment
+        spec:
+          serviceConfig:
+            serviceRef: deployment
+            serviceDefinition:
+              spec:
+                variables: []
+                manifests:
+                  - manifest:
+                      identifier: deployments
+                      type: K8sManifest
+                      spec:
+                        store:
+                          type: Github
+                          spec:
+                            connectorRef: personalGit
+                            gitFetchType: Branch
+                            paths:
+                              - hello-app/hw-deploy.yaml
+                              - hello-app/hw-svc.yaml
+                            repoName: sample-k8-app
+                            branch: main
+                        skipResourceVersioning: false
+                artifacts:
+                  primary:
+                    spec:
+                      connectorRef: docker3
+                      imagePath: xrlim/k8-app
+                      tag: <+input>
+                    type: DockerRegistry
+              type: Kubernetes
+          infrastructure:
+            environmentRef: dockerK8
+            infrastructureDefinition:
+              type: KubernetesDirect
+              spec:
+                connectorRef: test3
+                namespace: default
+                releaseName: release-<+INFRA_KEY>
+            allowSimultaneousDeployments: false
+          execution:
+            steps:
+              - step:
+                  name: Rollout Deployment
+                  identifier: rolloutDeployment
+                  type: K8sRollingDeploy
+                  timeout: 10m
+                  spec:
+                    skipDryRun: false
+                    pruningEnabled: false
+            rollbackSteps:
+              - step:
+                  name: Rollback Rollout Deployment
+                  identifier: rollbackRolloutDeployment
+                  type: K8sRollingRollback
+                  timeout: 10m
+                  spec:
+                    pruningEnabled: false
+        tags: {}
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: StageRollback
