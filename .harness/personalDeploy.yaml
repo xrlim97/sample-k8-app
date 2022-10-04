@@ -47,7 +47,7 @@ pipeline:
               type: KubernetesDirect
               spec:
                 connectorRef: test3
-                namespace: latest
+                namespace: default
                 releaseName: release-<+INFRA_KEY>
             allowSimultaneousDeployments: false
           execution:
